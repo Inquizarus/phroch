@@ -6,6 +6,11 @@ use \Symfony\Component\HttpFoundation\Response;
 
 class IndexController
 {
+        /** @var array  */
+        private $data = [
+            "message" => "",
+        ];
+
         /**
          * @param Request $request
          *
@@ -13,7 +18,7 @@ class IndexController
          **/
         public function getIndex(Request $request): Response
         {
-                $response = new Response(\json_encode([]), 200, [
+                $response = new Response(\json_encode($this->data), 200, [
                         'Content-Type' => 'application/json'
                 ]);
                 return $response;
