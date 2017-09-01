@@ -1,0 +1,19 @@
+<phpunit bootstrap="vendor/autoload.php" colors="true">
+    
+    <php>
+                    <const name="APPLICATION_TEST" value="true"/>
+                        </php>
+                            <testsuites>
+                                            <testsuite name="asd">
+                                                                <directory suffix="Test.php">./tests/Unit/</directory>
+                                                                        </testsuite>
+                                                                            </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./application/classes</directory>
+            <exclude>
+                <directory suffix=".php">./vendor/</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>
