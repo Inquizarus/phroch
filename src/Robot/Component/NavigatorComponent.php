@@ -18,7 +18,7 @@ class NavigatorComponent implements NavigatorComponentInterface
     /** @var int */
     private $facing = null;
 
-    public function __construct(Coordinates $coordinates, int $facing = self::FACING_NORTH)
+    public function __construct(Coordinates $coordinates, int $facing = self::FACING_SOUTH)
     {
         $this->coordinates = $coordinates;
         $this->facing = $facing;
@@ -113,6 +113,7 @@ class NavigatorComponent implements NavigatorComponentInterface
     public function setNewPosition(Coordinates $coordinates): NavigatorComponentInterface
     {
         $this->coordinates = $coordinates;
+        return $this;
     }
 
     /**

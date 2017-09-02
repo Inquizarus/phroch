@@ -39,12 +39,12 @@ class NavigatorComponentTest extends TestCase
 
         // Right one time
         $navigator->turn($command1);
-        $this->assertEquals(NavigatorComponent::FACING_EAST, $navigator->getCurrentFacing());
+        $this->assertEquals(NavigatorComponent::FACING_WEST, $navigator->getCurrentFacing());
 
         // Left two timesa
         $navigator->turn($command2);
         $navigator->turn($command2);
-        $this->assertEquals(NavigatorComponent::FACING_WEST, $navigator->getCurrentFacing());
+        $this->assertEquals(NavigatorComponent::FACING_EAST, $navigator->getCurrentFacing());
     }
 
     /**
