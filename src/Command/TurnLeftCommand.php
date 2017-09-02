@@ -1,7 +1,7 @@
 <?php
 namespace Botty\Command;
 
-class TurnLeftCommand extends AbstractCommand
+class TurnLeftCommand extends AbstractCommand implements TurnCommandInterface
 {
     /**
      * TurnLeftCommand constructor.
