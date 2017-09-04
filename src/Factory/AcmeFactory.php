@@ -4,6 +4,8 @@ namespace Botty\Factory;
 use Botty\Data\Coordinates;
 use Botty\Grid;
 use Botty\GridInterface;
+use Botty\Input\BasicInputDevice;
+use Botty\Input\InputDeviceInterface;
 use Botty\Robot\BasicRobot;
 use Botty\Robot\Component\NavigatorComponent;
 use Botty\Robot\Component\NavigatorComponentInterface;
@@ -70,6 +72,16 @@ class AcmeFactory implements AcmeFactoryInterface
     public function makeRobotWithComponents(NavigatorComponentInterface $navigator, UplinkComponentInterface $uplink): RobotInterface
     {
         return new BasicRobot($navigator, $uplink);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function makeInputDeviceWithRobot(RobotInterface $robot): InputDeviceInterface
+    {
+        $inputDevice = new BasicInputDevice();
+        $inputDevice->attachRobot($robot);
+        return $inputDevice;
     }
 
 }

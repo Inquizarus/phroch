@@ -2,6 +2,7 @@
 namespace Botty\Test\Factory;
 
 use Botty\Factory\AcmeFactory;
+use Botty\Input\InputDeviceInterface;
 use Botty\Robot\Component\UplinkComponentInterface;
 use Botty\Robot\RobotInterface;
 use Botty\SatelliteInterface;
@@ -94,5 +95,20 @@ class AcmeFactoryTest extends TestCase
         $robot = $factory->makeRobotWithComponents($navigator, $uplink);
 
         $this->assertInstanceOf(RobotInterface::class, $robot);
+    }
+
+    /**
+     * @test
+     */
+    public function testItReturnsInputDevice()
+    {
+        $factory = new AcmeFactory();
+        $grid = $factory->makeGridFromRequest(new Request());
+        $satellite = $factory->makeSatelliteWithGrid($grid);
+        $uplink = $factory->makeUplinkWithSatellite($satellite);
+        $navigator = $factory->makeNavigatorFromRequest(new Request());
+        $robot = $factory->makeRobotWithComponents($navigator, $uplink);
+        $inputDevice = $factory->makeInputDeviceWithRobot($robot);
+        $this->assertInstanceOf(InputDeviceInterface::class, $inputDevice);
     }
 }

@@ -2,6 +2,7 @@
 namespace Botty\Factory;
 
 use Botty\GridInterface;
+use Botty\Input\InputDeviceInterface;
 use Botty\Robot\Component\NavigatorComponentInterface;
 use Botty\Robot\Component\UplinkComponentInterface;
 use Botty\Robot\RobotInterface;
@@ -45,5 +46,12 @@ interface AcmeFactoryInterface
      * @return RobotInterface
      */
     public function makeRobotWithComponents(NavigatorComponentInterface $navigator, UplinkComponentInterface $uplink): RobotInterface;
+
+    /**
+     * @param RobotInterface $robot
+     *
+     * @return InputDeviceInterface
+     */
+    public function makeInputDeviceWithRobot(RobotInterface $robot): InputDeviceInterface;
 
 }
