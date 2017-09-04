@@ -104,12 +104,7 @@ class BasicRobot implements RobotInterface
     private function moveBackwards()
     {
         $newCoordinates = $this->navigator->calculateNewPositionBackwards();
-        if (
-            $this->uplink->areCoordinatesOutOfBounds($newCoordinates) === false &&
-            $this->uplink->areCoordinatesOccupied($newCoordinates) === false
-        ) {
-            $this->navigator->setNewPosition($newCoordinates);
-        }
+        $this->moveToNewPosition($newCoordinates);
     }
 
     /**
