@@ -19,6 +19,8 @@ class BasicRobot implements RobotInterface
     /** @var LoggerInterface */
     private $logger;
 
+    private $shutdownSignal = false;
+
     /**
      * BasicRobot constructor.
      *
@@ -38,6 +40,11 @@ class BasicRobot implements RobotInterface
      */
     public function runCommand(CommandInterface $command): RobotInterface
     {
+        if ($this->shutdownSignal) {
+            $this->logger->error('Shutdown signal received, stopping execution.');
+            throw new \Exception('Shutdown signal received.');
+        }
+
         if ($command->getType() > AbstractCommand::PRIMARY_PROTOCOL_FACING) {
             $this->navigator->turn($command);
         } elseif ($command->getType() > AbstractCommand::PRIMARY_PROTOCOL_MOVEMENT) {
@@ -112,11 +119,14 @@ class BasicRobot implements RobotInterface
     {
         if ($this->uplink->areCoordinatesOccupied($newCoordinates)) {
             $this->logger->error(sprintf('An obstacle is in the way at %s,%s!', $newCoordinates->x, $newCoordinates->y));
+            $this->shutdownSignal = true;
             return;
         } elseif ($this->uplink->areCoordinatesOutOfBounds($newCoordinates)) {
             $this->logger->error(sprintf('%s,%s are out of bounds!', $newCoordinates->x, $newCoordinates->y));
+            $this->shutdownSignal = true;
             return;
         }
+        $this->logger->info(sprintf('Moved to new position %s,%s', $newCoordinates->x, $newCoordinates->y));
         $this->navigator->setNewPosition($newCoordinates);
     }
 

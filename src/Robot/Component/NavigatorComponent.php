@@ -4,6 +4,7 @@ namespace Botty\Robot\Component;
 use Botty\Command\AbstractCommand;
 use Botty\Command\CommandInterface;
 use Botty\Data\Coordinates;
+use Botty\LoggerInterface;
 
 class NavigatorComponent implements NavigatorComponentInterface
 {
@@ -12,16 +13,27 @@ class NavigatorComponent implements NavigatorComponentInterface
     const FACING_SOUTH = 2;
     const FACING_WEST  = 3;
 
+    private $facingStringMap = [
+        self::FACING_NORTH => 'north',
+        self::FACING_EAST => 'east',
+        self::FACING_SOUTH => 'south',
+        self::FACING_WEST => 'west'
+    ];
+
     /** @var Coordinates */
     private $coordinates = null;
 
     /** @var int */
     private $facing = null;
 
-    public function __construct(Coordinates $coordinates, int $facing = self::FACING_SOUTH)
+    /** @var LoggerInterface */
+    private $logger = null;
+
+    public function __construct(Coordinates $coordinates, int $facing = self::FACING_SOUTH, LoggerInterface $logger)
     {
         $this->coordinates = $coordinates;
         $this->facing = $facing;
+        $this->logger = $logger;
     }
 
     /**
@@ -126,6 +138,7 @@ class NavigatorComponent implements NavigatorComponentInterface
         } else {
             $this->facing = $this->facing + 1;
         }
+        $this->logger->info(sprintf('Turned right, now facing %s', $this->facingStringMap[$this->facing]));
     }
 
     /**
@@ -138,6 +151,7 @@ class NavigatorComponent implements NavigatorComponentInterface
         } else {
             $this->facing = $this->facing - 1;
         }
+        $this->logger->info(sprintf('Turned left, now facing %s', $this->facingStringMap[$this->facing]));
     }
 
 }

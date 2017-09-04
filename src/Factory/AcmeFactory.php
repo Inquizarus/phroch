@@ -74,11 +74,24 @@ class AcmeFactory implements AcmeFactoryInterface
     public function makeNavigatorFromRequest(Request $request): NavigatorComponentInterface
     {
         $coordinates = new Coordinates();
+        $facingCodes = [
+            'n' => NavigatorComponent::FACING_NORTH,
+            'north' => NavigatorComponent::FACING_NORTH,
+            'e' => NavigatorComponent::FACING_EAST,
+            'east' => NavigatorComponent::FACING_EAST,
+            's' => NavigatorComponent::FACING_SOUTH,
+            'south' => NavigatorComponent::FACING_SOUTH,
+            'w' => NavigatorComponent::FACING_WEST,
+            'west' => NavigatorComponent::FACING_WEST
+        ];
+
+        $facing = $request->query->get('facing');
+        $facing = $facing && isset($facingCodes[$facing]) ? $facingCodes[$facing] : NavigatorComponent::FACING_SOUTH;
 
         $coordinates->x = (int) $request->query->get(self::POSITION_X_QUERY_KEY);
         $coordinates->y = (int) $request->query->get(self::POSITION_Y_QUERY_KEY);
 
-        return new NavigatorComponent($coordinates);
+        return new NavigatorComponent($coordinates, $facing, $this->logger);
     }
 
     /**

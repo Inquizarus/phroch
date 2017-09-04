@@ -22,7 +22,7 @@ class BasicRobotTest extends TestCase
      */
     public function testItCanTurn()
     {
-        $navigator = new NavigatorComponent(new Coordinates());
+        $navigator = new NavigatorComponent(new Coordinates(), NavigatorComponent::FACING_SOUTH, new Logger());
         $uplink = $this->getMockBuilder(UplinkComponentInterface::class)
             ->setMethodsExcept()
             ->getMock();
@@ -45,7 +45,7 @@ class BasicRobotTest extends TestCase
      */
     public function testItCanMove()
     {
-        $navigator = new NavigatorComponent(new Coordinates());
+        $navigator = new NavigatorComponent(new Coordinates(), NavigatorComponent::FACING_SOUTH, new Logger());
         $uplink = $this->getMockBuilder(UplinkComponentInterface::class)
             ->setMethodsExcept()
             ->getMock();
@@ -80,7 +80,7 @@ class BasicRobotTest extends TestCase
         $grid = new Grid(1, 2);
         $satellite = new Satellite($grid);
         $uplink = new UplinkComponent($satellite);
-        $navigator = new NavigatorComponent(new Coordinates());
+        $navigator = new NavigatorComponent(new Coordinates(), NavigatorComponent::FACING_SOUTH, new Logger());
         $robot = new BasicRobot($navigator, $uplink, new Logger());
         $grid->addRobot($robot);
 
@@ -106,12 +106,12 @@ class BasicRobotTest extends TestCase
         $startCoordinates->x = 0;
         $startCoordinates->y = 1;
 
-        $navigator = new NavigatorComponent($startCoordinates);
+        $navigator = new NavigatorComponent($startCoordinates, NavigatorComponent::FACING_SOUTH, new Logger());
         $robot = new BasicRobot($navigator, $uplink, new Logger());
         $grid->addRobot($robot);
 
         // This will be occupying 0,0 in the grid. Right behind moving robot.
-        $navigator2 = new NavigatorComponent(new Coordinates());
+        $navigator2 = new NavigatorComponent(new Coordinates(), NavigatorComponent::FACING_SOUTH, new Logger());
         $robot2 = new BasicRobot($navigator2, $uplink, new Logger());
         $grid->addRobot($robot2);
 
@@ -123,5 +123,26 @@ class BasicRobotTest extends TestCase
 
         $robot->runCommand($validMoveCommand);
         $this->assertEquals(2, $robot->getPositionY());
+    }
+
+    /**
+     * @test
+     * @expectedException \Exception
+     */
+    public function testItThrowsExceptionWhenShutdownSignalIsReceived()
+    {
+        $grid = new Grid(1, 3);
+        $satellite = new Satellite($grid);
+        $uplink = new UplinkComponent($satellite);
+
+        $startCoordinates = new Coordinates();
+        $startCoordinates->x = 0;
+        $startCoordinates->y = 0;
+
+        $navigator = new NavigatorComponent($startCoordinates, NavigatorComponent::FACING_NORTH, new Logger());
+        $robot = new BasicRobot($navigator, $uplink, new Logger());
+        $grid->addRobot($robot);
+        $robot->runCommand(new MoveForwardCommand());
+        $robot->runCommand(new MoveForwardCommand());
     }
 }

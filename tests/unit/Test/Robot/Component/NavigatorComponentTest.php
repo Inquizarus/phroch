@@ -6,6 +6,7 @@ use Botty\Command\MoveForwardCommand;
 use Botty\Command\TurnLeftCommand;
 use Botty\Command\TurnRightCommand;
 use Botty\Data\Coordinates;
+use Botty\Logger;
 use Botty\Robot\Component\NavigatorComponent;
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +20,7 @@ class NavigatorComponentTest extends TestCase
         $coordinates = new Coordinates;
         $coordinates->x = 7;
         $coordinates->y = 3;
-        $navigator = new NavigatorComponent($coordinates, NavigatorComponent::FACING_WEST);
+        $navigator = new NavigatorComponent($coordinates, NavigatorComponent::FACING_WEST, new Logger());
 
         $this->assertEquals(7, $navigator->getCurrentPositionX());
         $this->assertEquals(3, $navigator->getCurrentPositionY());
@@ -32,7 +33,7 @@ class NavigatorComponentTest extends TestCase
     public function testItInterpretsTurnCommandsCorrectly()
     {
         $coordinates = new Coordinates;
-        $navigator = new NavigatorComponent($coordinates);
+        $navigator = new NavigatorComponent($coordinates, NavigatorComponent::FACING_SOUTH, new Logger());
 
         $command1 = new TurnRightCommand();
         $command2 = new TurnLeftCommand();
@@ -55,7 +56,7 @@ class NavigatorComponentTest extends TestCase
         $coordinates = new Coordinates;
         $coordinates->y = 1;
         $coordinates->x = 1;
-        $navigator = new NavigatorComponent($coordinates, NavigatorComponent::FACING_SOUTH);
+        $navigator = new NavigatorComponent($coordinates, NavigatorComponent::FACING_SOUTH, new Logger());
 
         $expected1 = new  Coordinates();
         $expected1->x = 1;
