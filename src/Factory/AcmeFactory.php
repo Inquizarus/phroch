@@ -6,6 +6,8 @@ use Botty\Grid;
 use Botty\GridInterface;
 use Botty\Input\BasicInputDevice;
 use Botty\Input\InputDeviceInterface;
+use Botty\LoggerInterface;
+use Botty\Obstacle\ObstacleInterface;
 use Botty\Robot\BasicRobot;
 use Botty\Robot\Component\NavigatorComponent;
 use Botty\Robot\Component\NavigatorComponentInterface;
@@ -26,6 +28,19 @@ class AcmeFactory implements AcmeFactoryInterface
 
     const POSITION_X_QUERY_KEY = 'positionX';
     const POSITION_Y_QUERY_KEY = 'positionY';
+
+    /** @var LoggerInterface */
+    private $logger = null;
+
+    /**
+     * AcmeFactory constructor.
+     *
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * @inheritDoc
@@ -71,7 +86,7 @@ class AcmeFactory implements AcmeFactoryInterface
      */
     public function makeRobotWithComponents(NavigatorComponentInterface $navigator, UplinkComponentInterface $uplink): RobotInterface
     {
-        return new BasicRobot($navigator, $uplink);
+        return new BasicRobot($navigator, $uplink, $this->logger);
     }
 
     /**
@@ -82,6 +97,16 @@ class AcmeFactory implements AcmeFactoryInterface
         $inputDevice = new BasicInputDevice();
         $inputDevice->attachRobot($robot);
         return $inputDevice;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function makeObstaclesFromRequest(Request $request): array
+    {
+        $obstacles = [];
+
+        return $obstacles;
     }
 
 }

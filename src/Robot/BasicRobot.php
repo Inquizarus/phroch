@@ -3,6 +3,8 @@ namespace Botty\Robot;
 
 use Botty\Command\AbstractCommand;
 use Botty\Command\CommandInterface;
+use Botty\Data\Coordinates;
+use Botty\LoggerInterface;
 use Botty\Robot\Component\NavigatorComponentInterface;
 use Botty\Robot\Component\UplinkComponentInterface;
 
@@ -14,15 +16,21 @@ class BasicRobot implements RobotInterface
     /** @var UplinkComponentInterface */
     private $uplink = null;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * BasicRobot constructor.
      *
      * @param NavigatorComponentInterface $navigator
+     * @param UplinkComponentInterface $uplink
+     * @param LoggerInterface $logger
      */
-    public function __construct(NavigatorComponentInterface $navigator, UplinkComponentInterface $uplink)
+    public function __construct(NavigatorComponentInterface $navigator, UplinkComponentInterface $uplink, LoggerInterface $logger)
     {
         $this->navigator = $navigator;
         $this->uplink = $uplink;
+        $this->logger = $logger;
     }
 
     /**
@@ -80,12 +88,7 @@ class BasicRobot implements RobotInterface
     private function moveForward()
     {
         $newCoordinates = $this->navigator->calculateNewPositionForward();
-        if (
-            $this->uplink->areCoordinatesOutOfBounds($newCoordinates) === false &&
-            $this->uplink->areCoordinatesOccupied($newCoordinates) === false
-        ) {
-            $this->navigator->setNewPosition($newCoordinates);
-        }
+        $this->moveToNewPosition($newCoordinates);
     }
 
     /**
@@ -100,6 +103,21 @@ class BasicRobot implements RobotInterface
         ) {
             $this->navigator->setNewPosition($newCoordinates);
         }
+    }
+
+    /**
+     * @param Coordinates $newCoordinates
+     */
+    private function moveToNewPosition(Coordinates $newCoordinates): void
+    {
+        if ($this->uplink->areCoordinatesOccupied($newCoordinates)) {
+            $this->logger->error(sprintf('An obstacle is in the way at %s,%s!', $newCoordinates->x, $newCoordinates->y));
+            return;
+        } elseif ($this->uplink->areCoordinatesOutOfBounds($newCoordinates)) {
+            $this->logger->error(sprintf('%s,%s are out of bounds!', $newCoordinates->x, $newCoordinates->y));
+            return;
+        }
+        $this->navigator->setNewPosition($newCoordinates);
     }
 
 }

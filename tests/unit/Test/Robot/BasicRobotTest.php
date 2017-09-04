@@ -7,6 +7,7 @@ use Botty\Command\TurnLeftCommand;
 use Botty\Command\TurnRightCommand;
 use Botty\Data\Coordinates;
 use Botty\Grid;
+use Botty\Logger;
 use Botty\Robot\BasicRobot;
 use Botty\Robot\Component\NavigatorComponent;
 use Botty\Robot\Component\UplinkComponent;
@@ -25,7 +26,7 @@ class BasicRobotTest extends TestCase
         $uplink = $this->getMockBuilder(UplinkComponentInterface::class)
             ->setMethodsExcept()
             ->getMock();
-        $robot = new BasicRobot($navigator, $uplink);
+        $robot = new BasicRobot($navigator, $uplink, new Logger());
 
         $command1 = new TurnLeftCommand();
         $command2 = new TurnRightCommand();
@@ -54,7 +55,7 @@ class BasicRobotTest extends TestCase
         $uplink->expects($this->any())
             ->method('areCoordinatesOccupied')
             ->will($this->returnValue(false));
-        $robot = new BasicRobot($navigator, $uplink);
+        $robot = new BasicRobot($navigator, $uplink, new Logger());
 
         $forwardCommand = new MoveForwardCommand();
         $backwardsCommand = new MoveBackwardsCommand();
@@ -80,7 +81,7 @@ class BasicRobotTest extends TestCase
         $satellite = new Satellite($grid);
         $uplink = new UplinkComponent($satellite);
         $navigator = new NavigatorComponent(new Coordinates());
-        $robot = new BasicRobot($navigator, $uplink);
+        $robot = new BasicRobot($navigator, $uplink, new Logger());
         $grid->addRobot($robot);
 
         $outOfBoundsMoveCommand = new MoveBackwardsCommand();
@@ -106,12 +107,12 @@ class BasicRobotTest extends TestCase
         $startCoordinates->y = 1;
 
         $navigator = new NavigatorComponent($startCoordinates);
-        $robot = new BasicRobot($navigator, $uplink);
+        $robot = new BasicRobot($navigator, $uplink, new Logger());
         $grid->addRobot($robot);
 
         // This will be occupying 0,0 in the grid. Right behind moving robot.
         $navigator2 = new NavigatorComponent(new Coordinates());
-        $robot2 = new BasicRobot($navigator2, $uplink);
+        $robot2 = new BasicRobot($navigator2, $uplink, new Logger());
         $grid->addRobot($robot2);
 
         $occupiedMoveCommand = new MoveBackwardsCommand();

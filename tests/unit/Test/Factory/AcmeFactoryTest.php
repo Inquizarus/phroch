@@ -3,6 +3,7 @@ namespace Botty\Test\Factory;
 
 use Botty\Factory\AcmeFactory;
 use Botty\Input\InputDeviceInterface;
+use Botty\Logger;
 use Botty\Robot\Component\UplinkComponentInterface;
 use Botty\Robot\RobotInterface;
 use Botty\SatelliteInterface;
@@ -22,7 +23,7 @@ class AcmeFactoryTest extends TestCase
             AcmeFactory::GRID_Y_QUERY_KEY => 7
         ]);
 
-        $factory = new AcmeFactory();
+        $factory = new AcmeFactory(new Logger());
 
         $grid1 = $factory->makeGridFromRequest($request1);
         $grid2 = $factory->makeGridFromRequest($request2);
@@ -39,7 +40,7 @@ class AcmeFactoryTest extends TestCase
      */
     public function testItReturnsSatellite()
     {
-        $factory = new AcmeFactory();
+        $factory = new AcmeFactory(new Logger());
         $grid = $factory->makeGridFromRequest(new Request());
         $satellite = $factory->makeSatelliteWithGrid($grid);
 
@@ -51,7 +52,7 @@ class AcmeFactoryTest extends TestCase
      */
     public function testItReturnsUplink()
     {
-        $factory = new AcmeFactory();
+        $factory = new AcmeFactory(new Logger());
         $grid = $factory->makeGridFromRequest(new Request());
         $satellite = $factory->makeSatelliteWithGrid($grid);
         $uplink = $factory->makeUplinkWithSatellite($satellite);
@@ -70,7 +71,7 @@ class AcmeFactoryTest extends TestCase
             AcmeFactory::POSITION_Y_QUERY_KEY => 7
         ]);
 
-        $factory = new AcmeFactory();
+        $factory = new AcmeFactory(new Logger());
 
         $navigator1 = $factory->makeNavigatorFromRequest($request1);
         $navigator2 = $factory->makeNavigatorFromRequest($request2);
@@ -87,7 +88,7 @@ class AcmeFactoryTest extends TestCase
      */
     public function testItReturnsRobot()
     {
-        $factory = new AcmeFactory();
+        $factory = new AcmeFactory(new Logger());
         $grid = $factory->makeGridFromRequest(new Request());
         $satellite = $factory->makeSatelliteWithGrid($grid);
         $uplink = $factory->makeUplinkWithSatellite($satellite);
@@ -102,7 +103,7 @@ class AcmeFactoryTest extends TestCase
      */
     public function testItReturnsInputDevice()
     {
-        $factory = new AcmeFactory();
+        $factory = new AcmeFactory(new Logger());
         $grid = $factory->makeGridFromRequest(new Request());
         $satellite = $factory->makeSatelliteWithGrid($grid);
         $uplink = $factory->makeUplinkWithSatellite($satellite);

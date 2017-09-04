@@ -3,6 +3,7 @@ namespace Botty\Factory;
 
 use Botty\GridInterface;
 use Botty\Input\InputDeviceInterface;
+use Botty\Obstacle\ObstacleInterface;
 use Botty\Robot\Component\NavigatorComponentInterface;
 use Botty\Robot\Component\UplinkComponentInterface;
 use Botty\Robot\RobotInterface;
@@ -53,5 +54,12 @@ interface AcmeFactoryInterface
      * @return InputDeviceInterface
      */
     public function makeInputDeviceWithRobot(RobotInterface $robot): InputDeviceInterface;
+
+    /**
+     * @param Request $request
+     *
+     * @return ObstacleInterface[]
+     */
+    public function makeObstaclesFromRequest(Request $request): array;
 
 }
