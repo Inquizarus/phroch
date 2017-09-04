@@ -3,8 +3,10 @@ namespace Botty\Obstacle;
 
 class BasicObstacle implements ObstacleInterface
 {
+    /** @var int */
     private $positionX = null;
 
+    /** @var int */
     private $positionY = null;
 
     /**

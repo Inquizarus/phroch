@@ -7,7 +7,6 @@ use Botty\GridInterface;
 use Botty\Input\BasicInputDevice;
 use Botty\Input\InputDeviceInterface;
 use Botty\LoggerInterface;
-use Botty\Obstacle\ObstacleInterface;
 use Botty\Robot\BasicRobot;
 use Botty\Robot\Component\NavigatorComponent;
 use Botty\Robot\Component\NavigatorComponentInterface;
@@ -18,6 +17,13 @@ use Botty\Satellite;
 use Botty\SatelliteInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * ACME is a producer of extremely diverse products to very affordable prices.
+ * In reality, to gain a bit better control and quality you would perhaps outsource the
+ * production of components to different sub factories. But ACME is great for examples still!
+ *
+ * @package Botty\Factory
+ */
 class AcmeFactory implements AcmeFactoryInterface
 {
     const GRID_X_QUERY_KEY = 'gridX';

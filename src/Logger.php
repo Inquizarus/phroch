@@ -3,6 +3,12 @@ namespace Botty;
 
 use Botty\Data\LogEntry;
 
+/**
+ * Class Logger, not meant to me a real logging system but rather more in the lines of
+ * what a display would show related to the robot.
+ * s
+ * @package Botty
+ */
 class Logger implements LoggerInterface
 {
     const ENTRY_TYPE_ERROR = 'error';
