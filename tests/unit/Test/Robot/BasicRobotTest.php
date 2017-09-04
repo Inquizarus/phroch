@@ -6,8 +6,12 @@ use Botty\Command\MoveForwardCommand;
 use Botty\Command\TurnLeftCommand;
 use Botty\Command\TurnRightCommand;
 use Botty\Data\Coordinates;
+use Botty\Grid;
 use Botty\Robot\BasicRobot;
 use Botty\Robot\Component\NavigatorComponent;
+use Botty\Robot\Component\UplinkComponent;
+use Botty\Robot\Component\UplinkComponentInterface;
+use Botty\Satellite;
 use PHPUnit\Framework\TestCase;
 
 class BasicRobotTest extends TestCase
@@ -18,7 +22,10 @@ class BasicRobotTest extends TestCase
     public function testItCanTurn()
     {
         $navigator = new NavigatorComponent(new Coordinates());
-        $robot = new BasicRobot($navigator);
+        $uplink = $this->getMockBuilder(UplinkComponentInterface::class)
+            ->setMethodsExcept()
+            ->getMock();
+        $robot = new BasicRobot($navigator, $uplink);
 
         $command1 = new TurnLeftCommand();
         $command2 = new TurnRightCommand();
@@ -38,7 +45,16 @@ class BasicRobotTest extends TestCase
     public function testItCanMove()
     {
         $navigator = new NavigatorComponent(new Coordinates());
-        $robot = new BasicRobot($navigator);
+        $uplink = $this->getMockBuilder(UplinkComponentInterface::class)
+            ->setMethodsExcept()
+            ->getMock();
+        $uplink->expects($this->any())
+            ->method('areCoordinatesOccupied')
+            ->will($this->returnValue(false));
+        $uplink->expects($this->any())
+            ->method('areCoordinatesOccupied')
+            ->will($this->returnValue(false));
+        $robot = new BasicRobot($navigator, $uplink);
 
         $forwardCommand = new MoveForwardCommand();
         $backwardsCommand = new MoveBackwardsCommand();
@@ -53,5 +69,58 @@ class BasicRobotTest extends TestCase
         $robot->runCommand($backwardsCommand);
         $this->assertEquals(1, $robot->getPositionY());
 
+    }
+
+    /**
+     * @test
+     */
+    public function testItValidatesMoveNotBeingOOBBeforeMoving()
+    {
+        $grid = new Grid(1, 2);
+        $satellite = new Satellite($grid);
+        $uplink = new UplinkComponent($satellite);
+        $navigator = new NavigatorComponent(new Coordinates());
+        $robot = new BasicRobot($navigator, $uplink);
+        $grid->addRobot($robot);
+
+        $outOfBoundsMoveCommand = new MoveBackwardsCommand();
+        $validMoveCommand = new MoveForwardCommand();
+
+        $robot->runCommand($outOfBoundsMoveCommand);
+        $this->assertEquals(0, $robot->getPositionY());
+
+        $robot->runCommand($validMoveCommand);
+        $this->assertEquals(1, $robot->getPositionY());
+    }
+
+    /**
+     * @test
+     */
+    public function testItValidatesMoveNotBeingOccupiedBeforeMoving()
+    {
+        $grid = new Grid(1, 3);
+        $satellite = new Satellite($grid);
+        $uplink = new UplinkComponent($satellite);
+        $startCoordinates = new Coordinates();
+        $startCoordinates->x = 0;
+        $startCoordinates->y = 1;
+
+        $navigator = new NavigatorComponent($startCoordinates);
+        $robot = new BasicRobot($navigator, $uplink);
+        $grid->addRobot($robot);
+
+        // This will be occupying 0,0 in the grid. Right behind moving robot.
+        $navigator2 = new NavigatorComponent(new Coordinates());
+        $robot2 = new BasicRobot($navigator2, $uplink);
+        $grid->addRobot($robot2);
+
+        $occupiedMoveCommand = new MoveBackwardsCommand();
+        $validMoveCommand = new MoveForwardCommand();
+
+        $robot->runCommand($occupiedMoveCommand);
+        $this->assertEquals(1, $robot->getPositionY());
+
+        $robot->runCommand($validMoveCommand);
+        $this->assertEquals(2, $robot->getPositionY());
     }
 }
